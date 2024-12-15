@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
-/** const login = require("./fb-chat-api/index"); **/
+/** use this if your bot fast dismiss and autologout 
+const login = require("./fb-chat-api/index"); **/
 const login = require("chatbox-fca-remake");
 const express = require('express');
 const app = express();
@@ -599,7 +600,7 @@ app.get('/commands', (req, res) => {
 });
 
 const headers = {
-  'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3',
+  'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36',
   'Content-Type': 'application/json'
 };
 
@@ -1277,7 +1278,7 @@ function createConfig() {
      logLevel: "silent",
      updatePresence: true,
      selfListen: false,
-     userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64",
+     userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36",
      online: true,
      autoMarkDelivery: false,
      autoMarkRead: true

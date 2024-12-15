@@ -31,9 +31,6 @@ module.exports.config = {
 };
 
 module.exports.run = async function ({ api, event, args }) {
-  const x = ["https://i.imgur.com/VN9ugwO.jpeg", "https://i.imgur.com/qpInllD.jpeg"];
-  const bh = Math.floor(Math.random() * x.length);
-  const z = x[bh];
   const l = ["▞", "✦", "✧", "✦", "⟡", "ᯤ"];
   const m = Math.floor(Math.random() * l.length);
   const n = l[m];
@@ -60,8 +57,6 @@ module.exports.run = async function ({ api, event, args }) {
     });
   });
 
-const jl = await axios.get(z, { responseType: 'stream' });
-
   try {
     if (event.type === "message_reply") {
       if (event.messageReply.attachments[0]?.type === "photo") {
@@ -69,7 +64,7 @@ const jl = await axios.get(z, { responseType: 'stream' });
         const y = (await a.get(`https://kaiz-apis.gleeze.com/api/gemini-vision?q=${o}&uid=${event.senderID}&imageUrl=${p}`)).data;
         const z = `${n} | 𝗚𝗘𝗠𝗜𝗡𝗜-𝗙𝗟𝗔𝗦𝗛 𝟭.𝟱\n━━━━━━━━━━━━━━━━━━\n${y.response}\n━━━━━━━━━━━━━━━━━━`;
         api.unsendMessage(u.messageID);
-        return api.sendMessage(z, event.threadID);
+        return api.sendMessage(z, event.threadID, event.messageID);
       } else {
         api.unsendMessage(u.messageID);
         return api.sendMessage('Please reply to an image.', event.threadID);
@@ -92,7 +87,6 @@ const jl = await axios.get(z, { responseType: 'stream' });
       }
     }
 
-
     const H = d(A.answer);
     api.unsendMessage(u.messageID);
 
@@ -114,6 +108,6 @@ const jl = await axios.get(z, { responseType: 'stream' });
 
   } catch (error) {
     api.unsendMessage(u.messageID);
-    return api.sendMessage({body: '404 NOT FOUND', attachment: jl.data}, event.threadID);
+    return api.sendMessage("Api sucks", event.threadID);
   }
 };
