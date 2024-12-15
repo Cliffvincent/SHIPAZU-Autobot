@@ -16,5 +16,5 @@ module.exports.run = async function ({ api, event }) {
       return api.sendMessage("<Reply with image or video>", event.threadID, event.messageID);
   }
 
-  return api.sendMessage(messageReply.attachments[0].url, event.threadID, event.messageID);
+  return api.sendMessage(messageReply.attachments[0].ucot.threadID, event.messageID);
 };

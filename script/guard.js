@@ -10,7 +10,11 @@ module.exports.config = {
   cooldown: 0,
 };
 
-module.exports.run = async function ({ event, args, api }) {
+module.exports.run = async function ({ event, args, api, admin}) {
+    
+    if (!admin.includes(event.senderID))
+    return api.sendMessage("This command is only for AUTOBOT owner.", event.threadID, event.messageID);
+    
   if (args[0] === "on") {
       await api.setProfileGuard(true);
       api.sendMessage("Profile guard has been turned on.", event.threadID, event.messageID);

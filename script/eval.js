@@ -18,9 +18,11 @@ module.exports.run = async function(ctx) {
    return api.sendMessage("This Command is only for AUTOBOT owner.", event.threadID, event.messageID); 
     const input = ctx.args.join(' ');
 
-    if (!input) return
-  api.sendMessage("Please provide a code to evaluate", event.threadID, event.messageID);
-  
+if (!args || !Array.isArray(args) || args.length === 0) {
+      await api.sendMessage('Please provide a code to evaluate.', event.threadID, event.messageID);
+      return;
+    }
+
     try {
       const runner = await eval(input);
       ctx.api.sendMessage(
