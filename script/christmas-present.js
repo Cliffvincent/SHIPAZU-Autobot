@@ -26,12 +26,6 @@ module.exports.run = async function({ api, event, args }) {
 
     const imageUrl = args.join(" ");
 
-    if (imageUrl) {
-      if (!imageUrl.startsWith("http://") && !imageUrl.startsWith("https://")) {
-        return api.sendMessage('Invalid image URL. URL must start with http or https.', event.threadID, event.messageID);
-      }
-    }
-
     if (!mentionID && !imageUrl && !url) {
       return api.sendMessage('Please mention or reply to a user or provide an image URL or reply by image.', event.threadID, event.messageID);
     }
