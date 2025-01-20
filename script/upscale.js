@@ -6,7 +6,7 @@ module.exports.config = {
   version: "1.0",
   role: 0,
   hasPermission: 0,
-  credits: "kim",
+  credits: "hazey",
   description: "Enhance your photo",
   hasPrefix: false,
   usePrefix: false,
@@ -32,8 +32,8 @@ module.exports.run = async ({ api, event, args }) => {
   try {
     const findingMessage = await api.sendMessage(`🕟 | Upscaling Image, Please wait for a moment..`, event.threadID);
     
-    const response = await axios.get(`https://hiroshi-rest-api.replit.app/tools/upscale?url=${encodeURIComponent(photoUrl)}`);
-    const processedImageURL = response.data;
+    const response = await axios.get(`https://yt-video-production.up.railway.app/upscale?imageUrl=${encodeURIComponent(photoUrl)}`);
+    const processedImageURL = response.data.imageUrl;
 
     const img = (await axios.get(processedImageURL, { responseType: "arraybuffer" })).data;
 
