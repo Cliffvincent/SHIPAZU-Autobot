@@ -27,7 +27,7 @@ module.exports["run"] = async function({ api, event, args }) {
     api.setMessageReaction("🎼", event.messageID, (err) => {}, true);
 
     return api.sendMessage({
-      body: `𝗧𝗶𝘁𝗹𝗲: ${title}\n\n${response}`,
+      body: `𝗧𝗶𝘁𝗹𝗲: ${Title}\n\n${response}`,
       attachment: img
     }, event.threadID, () => fs.unlinkSync(ly), event.messageID);
   } catch (a) {
