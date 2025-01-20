@@ -16,23 +16,18 @@ module.exports["run"] = async function({ api, event, args }) {
   if (!t) return api.sendMessage("The title of the song is missing.", event.threadID, event.messageID);
 
   try {
-    const r = await axios.get(`https://api.popcat.xyz/lyrics?song=${encodeURIComponent(t)}`);
-    const { image, lyrics, artist, title } = r.data;
+    const r = await axios.get(`https://betadash-api-swordslush.vercel.app/lyrics-finder?title=${encodeURIComponent(t)}`);
+    const { response, Thumbnail, artist, Title } = r.data;
 
-    let ly = __dirname + "/../cache/lyrics.png";
-    let suc = (await axios.get(image, { responseType: "arraybuffer" })).data;
+    let ly = __dirname + "/cache/lyrics.png";
+    let suc = (await axios.get(Thumbnail, { responseType: "arraybuffer" })).data;
     fs.writeFileSync(ly, Buffer.from(suc, "utf-8"));
     let img = fs.createReadStream(ly);
 
     api.setMessageReaction("🎼", event.messageID, (err) => {}, true);
 
     return api.sendMessage({
-      body: `Title: ${title}
-Artist: ${artist}
-
-𖢨°•°•——[ LYRICS ]——•°•°𖢨
-${lyrics}
-𖢨°•°•——[ LYRICS ]——•°•°𖢨`,
+      body: `𝗧𝗶𝘁𝗹𝗲: ${title}\n\n${response}`,
       attachment: img
     }, event.threadID, () => fs.unlinkSync(ly), event.messageID);
   } catch (a) {
