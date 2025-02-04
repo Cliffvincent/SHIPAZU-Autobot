@@ -11,7 +11,7 @@ module.exports.config = {
     hasPrefix: false,
     cooldowns: 5,
     credits: "cliff", //api by samir
-    usage: "{p}{n} <prompt>",
+    usage: "{p}{n} ",
 };
 
 module.exports.run = async function ({ api, event, args }) {
@@ -29,9 +29,9 @@ module.exports.run = async function ({ api, event, args }) {
             }, event.messageID);
         });
 
-        const apiUrl = `https://kaiz-apis.gleeze.com/api/flux?prompt=${encodeURIComponent(prompt)}`;
+        const apiUrl = `https://betadash-api-swordslush.vercel.app/flux?prompt=${encodeURIComponent(prompt)}`;
 
-        const h = await axios.get(apiUrl, { responseType: 'stream' });
+        const h = await axios.get(apiUrl.data.data.imageUrl, { responseType: 'stream' });
 
         const message = {
             attachment: h.data,   
