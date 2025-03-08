@@ -1,84 +1,119 @@
-const axios = require('axios');
-const fs = require('fs-extra');
-const path = require('path');
+const _0xkg = require('axios');
+
+const n = String.fromCharCode(109, 117, 115, 105, 99);
+const d = String.fromCharCode(80, 108, 97, 121, 32, 97, 32, 115, 111, 110, 103, 32, 102, 114, 111, 109, 32, 89, 111, 117, 84, 117, 98, 101);
 
 module.exports.config = {
-  name: "music",
+  name: n,
   version: "2.0.6",
   role: 0,
   hasPermission: 0,
   credits: "Jonell",
-  description: "Play a song from YouTube",
-  commandCategory: "utility",
+  description: d,
+  commandCategory: "Media",
   usage: "[title]",
   usePrefix: false,
   hasPrefix: false,
-  aliases: ["sing"],
+  aliases: [String.fromCharCode(115, 105, 110, 103)],
   cooldown: 0
 };
 
-module.exports.run = async ({ api, event, args }) => {
-  const search = args.join(" ");
+module.exports.run = async ({ api: _0xjh, event: _0vlg, args: _0plh }) => {
+  const _0clh = _0plh.join(" ");
 
   try {
-    if (!search) {
-      const messageInfo = await new Promise(resolve => {
-        api.sendMessage('𝙿𝙻𝙴𝙰𝚂𝙴 𝙿𝚁𝙾𝚅𝙸𝙳𝙴 𝙰 𝚂𝙾𝙽𝙶 𝚃𝙸𝚃𝙻𝙴', event.threadID, (err, info) => {
-          resolve(info);
+    if (!_0clh) {
+      const _0hlg = await new Promise(_0rlh => {
+        _0xjh.sendMessage(String.fromCharCode(80, 76, 69, 65, 83, 69, 32, 80, 82, 79, 86, 73, 68, 69, 32, 65, 32, 83, 79, 78, 71, 32, 84, 73, 84, 76, 69), _0vlg.threadID, (_0klh, _0nlg) => {
+          _0rlh(_0nlg);
         });
       });
 
       setTimeout(() => {
-        api.unsendMessage(messageInfo.messageID);
+        _0xjh.unsendMessage(_0hlg.messageID);
       }, 10000);
-
       return;
     }
 
-    const findingMessage = await api.sendMessage(`𝚂𝙴𝙰𝚁𝙲𝙷𝙸𝙽𝙶 𝙵𝙾𝚁 "${search}"`, event.threadID);
+    const _0slh = await _0xjh.sendMessage(`𝚂𝙴𝙰𝚁𝙲𝙷𝙸𝙽𝙶 𝙵𝙾𝚁 "${_0clh}"`, _0vlg.threadID);
+    const _0tlh = `https://betadash-search-download.vercel.app/yt?search=${_0clh}`;
+    const _0ulh = await _0xkg.get(_0tlh);
+    const _0vlh = _0ulh.data[0];
+    const _0wlh = _0vlh.url;
 
-        const videoSearchUrl = `https://betadash-search-download.vercel.app/yt?search=${search}`;
+    let _0xlh = JSON.stringify({ query: _0wlh });
+    let _0ylh = {
+      method: "POST",
+      url: "https://mp3juice.at/api/yt-data",
+      headers: {
+        "User-Agent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Mobile Safari/537.36",
+        Accept: "application/json, text/plain, */*",
+        "Content-Type": "application/json"
+      },
+      data: _0xlh
+    };
 
-        const videoResponse = await axios.get(videoSearchUrl);
-        const videoData = videoResponse.data[0];
+    const _0zlh = await _0xkg.request(_0ylh);
+    const _0alh = _0zlh.data.items[0];
+    const _0blh = _0alh.id;
+    const _0clh = _0alh.title;
 
-        if (!videoData) {
-            return res.status(404).json({ error: 'Video not found' });
-        }
+    const _0dph = {
+      method: 'GET',
+      url: `https://c01-h01.cdnframe.com/api/v4/info/${_0blh}`,
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Mobile Safari/537.36',
+        'Accept': 'application/json'
+      }
+    };
 
-const videoUrl = videoData.url;
+    const _0eph = await _0xkg.request(_0dph);
+    const _0fph = _0eph.data.formats.audio.mp3.find(_0gph => _0gph.quality === 128).token;
 
-    const youtubeTrackUrl = `https://yt-video-production.up.railway.app/ytdl?url=${videoUrl}`;
-    const trackResponse = await axios.get(youtubeTrackUrl);
+    const _0hph = JSON.stringify({ token: _0fph });
+    const _0iph = {
+      method: 'POST',
+      url: 'https://c01-h01.cdnframe.com/api/v4/convert',
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Mobile Safari/537.36',
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      data: _0hph
+    };
 
-    const { audio, title } = trackResponse.data;
+    const _0jph = await _0xkg.request(_0iph);
+    const _0kph = _0jph.data.jobId;
 
-    const cacheDir = path.join(__dirname, 'cache');
-    const fileName = `music.mp3`;
-    const filePath = path.join(cacheDir, fileName);
+    const _0lph = {
+      method: 'GET',
+      url: `https://c01-h01.cdnframe.com/api/v4/status/${_0kph}`,
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Mobile Safari/537.36',
+        'Accept': 'application/json'
+      }
+    };
 
-    fs.ensureDirSync(cacheDir);
+    const _0mph = await _0xkg.request(_0lph);
+    const _0nph = _0mph.data.download;
 
-    const audioStream = await axios.get(audio, { responseType: 'arraybuffer' });
-    fs.writeFileSync(filePath, Buffer.from(audioStream.data));
+    const _0oph = await _0xkg.get(_0nph, { responseType: 'stream' });
 
-    api.sendMessage({
-      body: `💽 Now playing: ${title}`,
-      attachment: fs.createReadStream(filePath)
-    }, event.threadID, () => fs.unlinkSync(filePath), event.messageID);
+    _0xjh.sendMessage({
+      body: `💽 Now playing: ${_0clh}`,
+      attachment: _0oph.data
+    }, _0vlg.threadID, _0vlg.messageID);
 
-    api.unsendMessage(findingMessage.messageID);
-  } catch (error) {
-    const errorMessage = await new Promise(resolve => {
-      api.sendMessage('[ERROR] ' + error, event.threadID, (err, info) => {
-        resolve(info);
+    _0xjh.unsendMessage(_0slh.messageID);
+  } catch (_0pph) {
+    const _0qph = await new Promise(_0rph => {
+      _0xjh.sendMessage('[ERROR] ' + _0pph, _0vlg.threadID, (_0sph, _0tph) => {
+        _0rph(_0tph);
       });
     });
 
     setTimeout(() => {
-      api.unsendMessage(errorMessage.messageID);
+      _0xjh.unsendMessage(_0qph.messageID);
     }, 10000);
-
-    return;
   }
 };
