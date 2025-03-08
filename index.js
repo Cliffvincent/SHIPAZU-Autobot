@@ -11,6 +11,12 @@ const socketIo = require('socket.io');
 const bodyParser = require('body-parser');
 const axios = require('axios');
 
+ function agent() {
+    const chromeVersion = `${Math.floor(Math.random() * 6) + 130}.0.0.0`; 
+    const oprVersion = `${Math.floor(Math.random() * 5) + 86}.0.0.0`; 
+    return `Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/${chromeVersion} Mobile Safari/537.36 OPR/${oprVersion}`;
+       }
+
 app.use('/script/:filename', (req, res) => {
   const filename = req.params.filename;
   const filePath = path.join(__dirname, 'script', `${filename}`);
@@ -1278,10 +1284,10 @@ function createConfig() {
      logLevel: "silent",
      updatePresence: true,
      selfListen: false,
-     userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36",
-     online: true,
-     autoMarkDelivery: false,
-     autoMarkRead: true
+     userAgent: agent(),
+     online: false,  // Keep the bot offline or Set it to true if you want to see bots online status.
+     autoMarkDelivery: false,  // Disable auto marking of delivery status
+     autoMarkRead: false  // Disable auto marking of messages as read
     }
   }];
   const dataFolder = './data';
