@@ -24,7 +24,7 @@ download["config"] = {
 const downloadDirectory = path.resolve(__dirname, 'cache');
 
 download["handleEvent"] = async function ({ api, event }) {
-  if (event.body !== null) {
+ if (event.body !== null) {
     const regEx_tiktok = /https:\/\/(www\.|vt\.)?tiktok\.com\//;
     const link = event.body;
 
@@ -44,6 +44,116 @@ download["handleEvent"] = async function ({ api, event }) {
           attachment: videoStream.data
         }, event.threadID);
       } catch (error) {}
+    }
+  }
+
+
+if (event.body !== null) {
+    (async () => {
+      const apiKey = 'AIzaSyCYUPzrExoT9f9TsNj7Jqks1ZDJqqthuiI';
+      if (!apiKey) {
+        return;
+      }
+
+      const drive = google.drive({ version: 'v3', auth: apiKey });
+      const gdriveLinkPattern = /(?:https?:\/\/)?(?:drive\.google\.com\/(?:folderview\?id=|file\/d\/|open\?id=))([\w-]{33}|\w{19})(&usp=sharing)?/gi;
+      let match;
+
+      while ((match = gdriveLinkPattern.exec(event.body)) !== null) {
+        const fileId = match[1];
+
+        try {
+          const res = await drive.files.get({ fileId: fileId, fields: 'name, mimeType' });
+          const fileName = res.data.name;
+          const mimeType = res.data.mimeType;
+          const extension = mime.extension(mimeType);
+          const destFilename = `${fileName}${extension ? '.' + extension : ''}`;
+          const destPath = path.join(downloadDirectory, destFilename);
+
+          const dest = fs.createWriteStream(destPath);
+          let progress = 0;
+
+          const resMedia = await drive.files.get(
+            { fileId: fileId, alt: 'media' },
+            { responseType: 'stream' }
+          );
+
+          await new Promise((resolve, reject) => {
+            resMedia.data
+              .on('end', () => {
+                console.log();
+                resolve();
+              })
+              .on('error', (err) => {
+                console.error();
+                reject(err);
+              })
+              .on('data', (d) => {
+                progress += d.length;
+                process.stdout.write(`Downloaded ${progress} bytes\r`);
+              })
+              .pipe(dest);
+          });
+
+          await api.sendMessage({ body: `𝖦𝗈𝗈𝗀𝗅𝖾 𝖣𝗋𝗂𝗏𝖾 𝖫𝗂𝗇𝗄 \n\n𝙵𝙸𝙻𝙴𝙽𝙰𝙼𝙴: ${fileName}\n\n𝗬𝗔𝗭𝗞𝗬 𝗕𝗢𝗧 𝟮.𝟬.𝟬𝘃`, attachment: fs.createReadStream(destPath) }, event.threadID, () => fs.unlinkSync(destPath),
+        event.messageID);
+
+          await fs.promises.unlink(destPath);
+          console.log();
+        } catch (err) {
+          console.error();
+        }
+      }
+    })();
+  }
+
+  if (event.body !== null) {
+    const facebookLinkRegex = /https:\/\/www\.facebook\.com\/\S+/;
+
+    const downloadAndSendFBContent = async (url) => {
+      try {
+        const result = await getFBInfo(url);
+        const videoData = await axios.get(encodeURI(result.sd), { responseType: 'stream' });
+
+        api.sendMessage({
+          body: `𝖠𝗎𝗍𝗈 𝖣𝗈𝗐𝗇 𝖥𝖺𝖼𝖾𝖻𝗈𝗈𝗄\n\nTitle: ${result.title}\n\n𝗬𝗔𝗭𝗞𝗬 𝗕𝗢𝗧 𝟮.𝟬.𝟬𝘃`,
+          attachment: videoData.data
+        }, event.threadID);
+      } catch (e) {
+        console.error();
+      }
+    };
+
+    if (facebookLinkRegex.test(event.body)) {
+      downloadAndSendFBContent(event.body);
+    }
+  }
+
+  if (event.body !== null) {
+    const fbWatchRegex = /https:\/\/fb\.watch\/[a-zA-Z0-9_-]+/i;
+    try {
+      if (event.body !== null) {
+        const url = event.body;
+        if (fbWatchRegex.test(url)) {
+          const res = await fbDownloader(url, { headers });
+          if (res.success && res.download && res.download.length > 0) {
+            const videoUrl = res.download[0].url;
+            const response = await axios.get(videoUrl, { responseType: "stream" }, { headers });
+            const filePath = path.join(downloadDirectory, `${Date.now()}.mp4`);
+            const fileStream = fs.createWriteStream(filePath);
+            response.data.pipe(fileStream);
+            fileStream.on('finish', () => {
+              const messageBody = `𝖠𝗎𝗍𝗈 𝖣𝗈𝗐𝗇 FB.Watch\n\n𝗬𝗔z𝗞𝗬 𝗕𝗢𝗧 𝟮.𝟬.𝟬𝘃`;
+              api.sendMessage({
+                body: messageBody,
+                attachment: fs.createReadStream(filePath)
+              }, event.threadID, () => fs.unlinkSync(filePath), event.messageID);
+            });
+          }
+        }
+      }
+    } catch (err) {
+      console.error();
     }
   }
 
@@ -70,7 +180,6 @@ download["handleEvent"] = async function ({ api, event }) {
           }
         } catch (e) {}
       };
-
       downloadAndSendIGContent(event.body);
     }
   }
