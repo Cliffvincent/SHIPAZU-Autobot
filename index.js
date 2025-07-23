@@ -3,7 +3,11 @@ const path = require('path');
 /** use this if your bot fast dismiss and autologout 
 const login = require("./fb-chat-api/index"); 
 /** const login = require("chatbox-fca-remake"); **/
-const { login } = require("ws3-fca");
+const modules = ["ws3-fca", "./fb-chat-api/index", "chatbox-fca-remake"];
+
+const selectedModule = modules[Math.floor(Math.random() * modules.length)];
+
+const { login } = require(selectedModule);
 const express = require('express');
 const app = express();
 const chalk = require('chalk');
